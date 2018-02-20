@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ListenTo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+	<script
+  src="http://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <div class="container">
+    	<div class="input-group mb-3">
+		  <input type="text" class="form-control" placeholder="Enter youtube url"  aria-describedby="basic-addon2" id="itemUrl">
+		  <div class="input-group-append">
+		    <button class="btn btn-outline-secondary" type="button" onclick="addItemToList()">Add</button>
+		  </div>
+		</div>
+        <div class="container">
+            <ul class="list-group" id="playlist">
+
+			</ul>
+        </div>
+        <button class="btn btn-outline-secondary" onclick="play()">Submit</button>
+    </div>
+    <div>
+        <audio id="audio" controls>
+            <source id="audPlayer" src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <script type="text/javascript">
+    	function addItemToList(){
+    		var itemTemplate = '<li class="list-group-item itemUrl">';
+	    	var newItem = $('#itemUrl').val();
+            var id = newItem.split("=")[1];
+	    	$('#itemUrl').val("");
+	    	itemTemplate+=id+"</li>";
+	    	$('#playlist').append(itemTemplate);
+    	}
+        function play(){
+            var apiUrl='http://localhost:5000/play/';
+            var id,i,list = $('.itemUrl');
+            for(i=0;i<list.length;i++){
+                id=list[i].innerHTML;
+                console.log("id: "+id);
+                $.ajax({
+                    url: apiUrl+id,
+                    method: 'GET',
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    success: function (res){
+                        console.log(res);
+                        $('#audPlayer').attr('src', 'http://localhost:5000/file/test.mp3');
+                        var audio = document.getElementById('audio');
+                        audio.load();
+                        audio.play();
+                    }
+                })
+            }
+        }
+    </script>
+    
+</body>
+</html>
