@@ -34,7 +34,7 @@
         </audio>
     </div>
     <script type="text/javascript">
-        var root='http://172.26.90.165:5000/';
+        var root='http://192.168.1.105:5000/';
 
     	function addItemToList(){
     		var itemTemplate = '<li class="list-group-item itemUrl">';
@@ -54,41 +54,58 @@
             i=0;
             id=list[i].innerHTML;
             console.log("id: "+id);
-            getAudio(apiUrl+id).then(function (){
+            getAudio(apiUrl+id, ind).then(function (){
                 console.log("play next");
             if(ind+1<list.length)
             return play(ind+1);
             });
         }
-        function getAudio(audioUrl){
-
-            return new Promise((resolve, reject)=>{
-                $.ajax({
-                    url: audioUrl,
-                    method: 'GET',
-                    headers: {
-                        'Access-Control-Allow-Origin': '*'
-                    },
-                    success: function (res){
-                        console.log(res);
-                        playAudio().then(function (){
-                            resolve();
-                        })
-                    }
-                });
+        function getAudio(audioUrl, ind){
+            $.ajax({
+                url: audioUrl,
+                method: 'GET',
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                success: function (res){
+                    console.log(res);
+                    playAudio(ind);
+                }
             });
         }
 
-        function playAudio(){
-            return new Promise((resolve, reject)=>{
-                $('#audPlayer').attr('src', root+'file/test.mp3');
-                var audio = document.getElementById('audio');
-                audio.load();
-                audio.play();
-                audio.onended=function (){
-                    console.log("ended");
-                    resolve();
-                };
+        function playAudio(ind){
+            if(ind %2==0)
+            $('#audPlayer').attr('src', root+'file/test.mp3');
+            else
+            $('#audPlayer').attr('src', root+'file/test2.mp3');
+            var audio = document.getElementById('audio');
+            audio.load();
+            audio.play();
+            /*while(audio.played.length==0)
+            setTimeout(function (){
+
+            }, 500)*/
+            //while(audio.played.length==0);
+            getNextAudio(ind+1);
+            audio.onended=function (){
+                console.log("ended");
+                return playAudio(ind+1);
+            };
+        }
+
+        function getNextAudio(ind){
+            var id = $('.itemUrl')[ind].innerHTML;
+            var audioUrl=root+'play/'+id;
+            $.ajax({
+                url: audioUrl,
+                method: 'GET',
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                success: function (res){
+                    console.log(res);
+                }
             });
         }
     </script>
