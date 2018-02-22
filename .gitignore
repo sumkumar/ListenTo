@@ -1,2 +1,7 @@
 node_modules/
 .idea/
+tutorial-env/Lib/
+tutorial-env/etc/
+tutorial-env/Scripts/
+tutorial-env/__pycache__/
+tutorial-env/share/
